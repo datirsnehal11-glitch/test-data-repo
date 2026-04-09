@@ -1,0 +1,591 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#f7f6ff;--surface:#ffffff;--surface2:#f0effb;--border:#e3e1f7;
+--p1:#6c47ff;--p2:#9b6dff;--p3:#c5b0ff;--p4:#ede9ff;
+--g1:#00c48c;--g2:#00e5a6;
+--o1:#ff6b35;--o2:#ff9a6c;
+--b1:#1a73e8;--b2:#4d9ef7;
+--y1:#f5a623;--y2:#ffc85c;
+--text:#1a1733;--muted:#7b7a99;--dim:#b0aec8;
+--sans:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+--r:10px;--rlg:16px;--rxl:24px;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+.app-shell{display:flex;flex-direction:column;min-height:100vh;}
+
+/* TOP NAV */
+.topnav{background:var(--p1);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-size:18px;font-weight:800;letter-spacing:-0.5px;}
+.brand-dot{width:28px;height:28px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.brand-dot svg{width:16px;height:16px;}
+.brand span{opacity:0.65;font-weight:500;}
+.nav-pills{display:flex;gap:6px;}
+.nav-pill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.7);cursor:pointer;border:none;background:transparent;transition:all 0.15s;}
+.nav-pill.active{background:rgba(255,255,255,0.2);color:#fff;}
+.nav-pill:hover{background:rgba(255,255,255,0.12);color:#fff;}
+
+/* LAYOUT */
+.workspace{display:grid;grid-template-columns:280px 1fr;flex:1;}
+
+/* SIDEBAR */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:20px 16px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;}
+.sidebar-section{}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase;margin-bottom:10px;font-family:var(--mono);}
+
+/* Category Tabs */
+.cat-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.cat-tab{padding:10px 8px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--surface);cursor:pointer;text-align:center;transition:all 0.15s;}
+.cat-tab:hover{border-color:var(--p3);}
+.cat-tab.active{border-color:var(--p1);background:var(--p4);}
+.cat-tab-icon{font-size:18px;margin-bottom:4px;}
+.cat-tab-label{font-size:11px;font-weight:700;color:var(--muted);}
+.cat-tab.active .cat-tab-label{color:var(--p1);}
+
+/* Fields */
+.field-list{display:flex;flex-direction:column;gap:4px;max-height:240px;overflow-y:auto;}
+.field-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;transition:background 0.1s;user-select:none;}
+.field-item:hover{background:var(--surface2);}
+.field-item.on{background:var(--p4);}
+.fcheck{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.field-item.on .fcheck{background:var(--p1);border-color:var(--p1);}
+.fcheck-inner{width:8px;height:6px;display:none;}
+.field-item.on .fcheck-inner{display:block;}
+.field-item.on .fcheck-inner svg{width:8px;height:6px;}
+.fname{font-size:12px;font-weight:600;color:var(--text);flex:1;}
+.ftype{font-size:9px;font-family:var(--mono);font-weight:500;color:var(--dim);background:var(--surface2);padding:2px 6px;border-radius:4px;}
+
+/* Count Slider */
+.count-row{display:flex;align-items:center;gap:10px;}
+.count-num{font-size:22px;font-weight:800;color:var(--p1);min-width:40px;font-family:var(--mono);}
+input[type=range]{flex:1;height:5px;appearance:none;background:var(--border);border-radius:3px;cursor:pointer;outline:none;}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:var(--p1);cursor:pointer;border:3px solid #fff;box-shadow:0 0 0 2px var(--p3);}
+
+/* Generate Btn */
+.gen-btn{width:100%;padding:14px;background:var(--p1);color:#fff;font-family:var(--sans);font-size:14px;font-weight:800;border:none;border-radius:var(--rlg);cursor:pointer;transition:all 0.15s;letter-spacing:0.3px;}
+.gen-btn:hover{background:#5a38e8;transform:translateY(-1px);}
+.gen-btn:active{transform:none;}
+
+/* RIGHT PANEL */
+.right-panel{display:flex;flex-direction:column;background:var(--bg);}
+
+/* Stats Row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:14px 16px;}
+.stat-card-label{font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px;}
+.stat-card-value{font-size:22px;font-weight:800;color:var(--text);font-family:var(--mono);}
+.stat-card.c-purple .stat-card-value{color:var(--p1);}
+.stat-card.c-green .stat-card-value{color:var(--g1);}
+.stat-card.c-orange .stat-card-value{color:var(--o1);}
+.stat-card.c-blue .stat-card-value{color:var(--b1);}
+
+/* Toolbar */
+.toolbar{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.view-tabs{display:flex;background:var(--surface2);border-radius:var(--r);padding:3px;gap:2px;}
+.view-tab{padding:6px 16px;border-radius:7px;font-size:12px;font-weight:700;font-family:var(--mono);color:var(--muted);cursor:pointer;border:none;background:transparent;transition:all 0.15s;letter-spacing:0.3px;}
+.view-tab.active{background:var(--surface);color:var(--p1);box-shadow:0 1px 4px rgba(108,71,255,0.15);}
+.toolbar-right{display:flex;gap:8px;align-items:center;}
+.tbtn{padding:7px 14px;border-radius:var(--r);font-size:12px;font-weight:700;border:1.5px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:all 0.15s;font-family:var(--sans);}
+.tbtn:hover{border-color:var(--p1);color:var(--p1);}
+.tbtn.danger{border-color:transparent;color:var(--muted);}
+.tbtn.danger:hover{color:var(--o1);border-color:var(--o2);}
+
+/* Data Area */
+.data-area{flex:1;overflow:auto;}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:80px 40px;color:var(--dim);}
+.empty-blob{width:72px;height:72px;border-radius:var(--rxl);background:var(--p4);display:flex;align-items:center;justify-content:center;}
+.empty-blob svg{width:32px;height:32px;}
+.empty-title{font-size:16px;font-weight:800;color:var(--muted);}
+.empty-sub{font-size:13px;color:var(--dim);text-align:center;max-width:260px;line-height:1.6;}
+.empty-cta{padding:10px 24px;background:var(--p1);color:#fff;font-size:13px;font-weight:700;border:none;border-radius:var(--r);cursor:pointer;font-family:var(--sans);}
+
+/* Table */
+.tbl-wrap{overflow:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;font-family:var(--mono);}
+thead tr{background:var(--surface);position:sticky;top:0;z-index:5;}
+th{padding:10px 14px;text-align:left;font-size:9px;font-weight:700;letter-spacing:1.2px;color:var(--dim);text-transform:uppercase;border-bottom:1.5px solid var(--border);}
+td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text);white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis;}
+tr:hover td{background:var(--p4);}
+.td-idx{color:var(--dim);font-size:10px;}
+.td-email{color:var(--b1);}
+.td-phone{color:var(--g1);}
+.td-date{color:var(--y1);}
+.td-money{color:var(--g1);font-weight:600;}
+.td-card{color:var(--o1);}
+.td-id{color:var(--dim);font-size:10px;}
+.pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:700;letter-spacing:0.4px;}
+.pill-active{background:#e0faf2;color:#00875a;}
+.pill-inactive{background:var(--surface2);color:var(--muted);}
+.pill-pending{background:#fff8e6;color:#b36a00;}
+.pill-failed{background:#fef0f0;color:#cc3333;}
+
+/* JSON / SQL */
+.code-view{padding:20px;font-family:var(--mono);font-size:12px;line-height:1.8;white-space:pre;overflow:auto;color:var(--text);display:none;}
+.jk{color:var(--p1);}
+.js{color:#00875a;}
+.jn{color:var(--o1);}
+.jb{color:var(--b1);}
+.sk{color:var(--b1);font-weight:700;}
+.ss{color:#00875a;}
+.sn{color:var(--o1);}
+
+/* Export bar */
+.export-bar{background:var(--surface);border-top:1.5px solid var(--border);padding:12px 20px;display:none;align-items:center;justify-content:space-between;}
+.export-info{font-size:12px;font-family:var(--mono);color:var(--muted);}
+.export-btns{display:flex;gap:8px;}
+.exp-btn{padding:8px 18px;border-radius:var(--r);font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:var(--sans);transition:all 0.15s;}
+.exp-csv{background:#e0faf2;color:#007a58;}
+.exp-csv:hover{background:#c2f5e4;}
+.exp-json{background:var(--p4);color:var(--p1);}
+.exp-json:hover{background:#d9d2ff;}
+.exp-xlsx{background:#fff0e8;color:#c94a00;}
+.exp-xlsx:hover{background:#ffdec8;}
+.exp-sql{background:#e8f0fd;color:#1a56c4;}
+.exp-sql:hover{background:#ccdaf8;}
+
+.toast{position:absolute;bottom:24px;right:24px;padding:10px 18px;background:var(--p1);color:#fff;font-size:13px;font-weight:700;border-radius:var(--r);opacity:0;transition:opacity 0.25s;pointer-events:none;font-family:var(--sans);}
+</style>
+
+<div class="app-shell">
+
+<nav class="topnav">
+  <div class="brand">
+    <div class="brand-dot">
+      <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="#6c47ff"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="#9b6dff"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="#9b6dff"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="#c5b0ff"/></svg>
+    </div>
+    DataForge <span>Pro</span>
+  </div>
+  <div class="nav-pills">
+    <button class="nav-pill active">Generator</button>
+    <button class="nav-pill">History</button>
+    <button class="nav-pill">Settings</button>
+  </div>
+</nav>
+
+<div class="workspace">
+
+  <aside class="sidebar">
+
+    <div class="sidebar-section">
+      <div class="sec-label">Data Category</div>
+      <div class="cat-tabs" id="catTabs">
+        <div class="cat-tab active" data-cat="personal" onclick="selectCat('personal')">
+          <div class="cat-tab-icon">👤</div>
+          <div class="cat-tab-label">Personal</div>
+        </div>
+        <div class="cat-tab" data-cat="financial" onclick="selectCat('financial')">
+          <div class="cat-tab-icon">💳</div>
+          <div class="cat-tab-label">Financial</div>
+        </div>
+        <div class="cat-tab" data-cat="api" onclick="selectCat('api')">
+          <div class="cat-tab-icon">🔌</div>
+          <div class="cat-tab-label">API / JSON</div>
+        </div>
+        <div class="cat-tab" data-cat="database" onclick="selectCat('database')">
+          <div class="cat-tab-icon">🗄️</div>
+          <div class="cat-tab-label">Database</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sec-label">Fields</div>
+      <div class="field-list" id="fieldList"></div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sec-label">Record Count</div>
+      <div class="count-row">
+        <span class="count-num" id="countDisplay">25</span>
+        <input type="range" min="1" max="500" value="25" step="1" id="countSlider" oninput="document.getElementById('countDisplay').textContent=this.value">
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sec-label">Locale</div>
+      <select id="localeSelect" style="width:100%;padding:8px 10px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--surface);font-family:var(--sans);font-size:13px;font-weight:600;color:var(--text);cursor:pointer;outline:none;">
+        <option value="en_IN">🇮🇳 India (EN)</option>
+        <option value="en_US">🇺🇸 USA (EN)</option>
+        <option value="en_GB">🇬🇧 UK (EN)</option>
+        <option value="de_DE">🇩🇪 Germany</option>
+        <option value="fr_FR">🇫🇷 France</option>
+      </select>
+    </div>
+
+    <button class="gen-btn" onclick="generateData()">⚡ Generate Data</button>
+
+  </aside>
+
+  <div class="right-panel">
+
+    <div class="stats-row" id="statsRow" style="display:none">
+      <div class="stat-card c-purple"><div class="stat-card-label">Records</div><div class="stat-card-value" id="sRecords">0</div></div>
+      <div class="stat-card c-green"><div class="stat-card-label">Fields</div><div class="stat-card-value" id="sFields">0</div></div>
+      <div class="stat-card c-orange"><div class="stat-card-label">Size</div><div class="stat-card-value" id="sSize">0B</div></div>
+      <div class="stat-card c-blue"><div class="stat-card-label">Time</div><div class="stat-card-value" id="sTime">0ms</div></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="view-tabs">
+        <button class="view-tab active" id="vt-table" onclick="switchView('table')">TABLE</button>
+        <button class="view-tab" id="vt-json" onclick="switchView('json')">JSON</button>
+        <button class="view-tab" id="vt-sql" onclick="switchView('sql')">SQL</button>
+      </div>
+      <div class="toolbar-right">
+        <button class="tbtn" onclick="copyView()">⎘ Copy</button>
+        <button class="tbtn danger" onclick="clearAll()">Clear</button>
+      </div>
+    </div>
+
+    <div class="data-area" id="dataArea">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-blob">
+          <svg viewBox="0 0 32 32" fill="none"><rect x="2" y="2" width="12" height="12" rx="3" fill="#6c47ff"/><rect x="18" y="2" width="12" height="12" rx="3" fill="#c5b0ff"/><rect x="2" y="18" width="12" height="12" rx="3" fill="#c5b0ff"/><rect x="18" y="18" width="12" height="12" rx="3" fill="#6c47ff"/></svg>
+        </div>
+        <div class="empty-title">No data yet</div>
+        <div class="empty-sub">Pick a category, select fields, set count, then hit Generate</div>
+        <button class="empty-cta" onclick="generateData()">Generate sample data</button>
+      </div>
+      <div class="tbl-wrap" id="tableView" style="display:none">
+        <table><thead id="tHead"></thead><tbody id="tBody"></tbody></table>
+      </div>
+      <div class="code-view" id="jsonView"></div>
+      <div class="code-view" id="sqlView"></div>
+    </div>
+
+    <div class="export-bar" id="exportBar">
+      <span class="export-info" id="exportInfo">Ready to export</span>
+      <div class="export-btns">
+        <button class="exp-btn exp-csv" onclick="doExport('csv')">↓ CSV</button>
+        <button class="exp-btn exp-json" onclick="doExport('json')">↓ JSON</button>
+        <button class="exp-btn exp-xlsx" onclick="doExport('xlsx')">↓ Excel</button>
+        <button class="exp-btn exp-sql" onclick="doExport('sql')">↓ SQL</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const uid=()=>'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c=='x'?r:(r&0x3|0x8)).toString(16);});
+const fmtDate=(y1,y2)=>{const d=new Date(rnd(y1,y2),rnd(0,11),rnd(1,28));return d.toISOString().split('T')[0];};
+const fmtDT=()=>new Date(rnd(Date.now()-2e10,Date.now())).toISOString();
+const luhn=n=>{let s=0,alt=false;for(let i=n.length-1;i>=0;i--){let d=parseInt(n[i]);if(alt){d*=2;if(d>9)d-=9;}s+=d;alt=!alt;}return s%10===0;};
+const cardNum=(prefix)=>{let n=prefix;while(n.length<15)n+=rnd(0,9);let check=0,alt=false;for(let i=n.length-1;i>=0;i--){let d=parseInt(n[i]);if(alt){d*=2;if(d>9)d-=9;}check+=d;alt=!alt;}n+=(10-(check%10))%10;return n.match(/.{1,4}/g).join('-');};
+const bankNum=()=>rnd(1000000000,9999999999).toString();
+const iban=()=>`IN${rnd(10,99)}${rnd(1000,9999)}${rnd(10000000,99999999)}`;
+const swiftCode=()=>pick(['HDFC','ICIC','SBIN','AXIS','KOTAK','YESB','IDBI','PUNB'])+pick(['IN','US','GB'])+pick(['BB','CC','DD','MM'])+rnd(100,999);
+
+const LOCALE={
+  en_IN:{
+    first:['Aarav','Ananya','Arjun','Diya','Ishaan','Kavya','Rohan','Priya','Vivaan','Sneha','Aditya','Riya','Rahul','Meera','Kiran','Pooja','Suresh','Anjali'],
+    last:['Sharma','Patel','Singh','Kumar','Verma','Gupta','Rao','Joshi','Nair','Agarwal','Mehta','Bhatia','Iyer','Reddy'],
+    city:['Mumbai','Delhi','Bangalore','Hyderabad','Chennai','Kolkata','Pune','Ahmedabad','Jaipur','Surat'],
+    state:['MH','DL','KA','TN','WB','GJ','RJ','UP','MP','KL'],
+    domains:['gmail.com','yahoo.co.in','rediffmail.com','hotmail.com'],
+    phone:()=>`+91-${rnd(70000,99999)}${rnd(10000,99999)}`,
+    zip:()=>rnd(400001,600999).toString(),
+    currency:'INR',street:()=>`${rnd(1,200)}, ${pick(['MG Road','Linking Rd','Brigade Rd','Anna Salai','FC Road','SG Highway'])}`,
+    bank:()=>pick(['HDFC Bank','ICICI Bank','SBI','Axis Bank','Kotak Mahindra','Yes Bank']),
+  },
+  en_US:{
+    first:['James','Emma','Liam','Olivia','Noah','Ava','William','Sophia','Oliver','Isabella','Benjamin','Mia'],
+    last:['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Martinez','Wilson'],
+    city:['New York','Los Angeles','Chicago','Houston','Phoenix','Dallas','Austin','Seattle'],
+    state:['NY','CA','IL','TX','AZ','FL','OH','WA'],
+    domains:['gmail.com','yahoo.com','outlook.com','icloud.com'],
+    phone:()=>`+1-${rnd(200,999)}-${rnd(100,999)}-${rnd(1000,9999)}`,
+    zip:()=>rnd(10000,99999).toString(),currency:'USD',
+    street:()=>`${rnd(1,9999)} ${pick(['Main','Oak','Maple','Elm','Cedar'])} ${pick(['St','Ave','Blvd','Dr'])}`,
+    bank:()=>pick(['Chase','Bank of America','Wells Fargo','Citibank','US Bank']),
+  },
+  en_GB:{
+    first:['Oliver','Amelia','George','Isla','Harry','Poppy','Jack','Ava','Charlie','Lily'],
+    last:['Smith','Jones','Williams','Taylor','Brown','Davies','Evans','Wilson'],
+    city:['London','Birmingham','Manchester','Glasgow','Liverpool','Bristol'],
+    state:['ENG','SCT','WLS','NIR'],
+    domains:['gmail.com','yahoo.co.uk','btinternet.com'],
+    phone:()=>`+44-20-${rnd(1000,9999)}-${rnd(1000,9999)}`,
+    zip:()=>`${pick(['SW','EC','W','E','N'])}${rnd(1,20)} ${rnd(1,9)}${pick(['AA','AB','BB'])}`,
+    currency:'GBP',street:()=>`${rnd(1,250)} ${pick(['High St','Church Rd','Victoria Rd','Park Rd'])}`,
+    bank:()=>pick(['Barclays','HSBC','Lloyds','NatWest','Santander UK']),
+  },
+};
+['de_DE','fr_FR'].forEach(l=>LOCALE[l]=LOCALE.en_US);
+
+function loc(){return LOCALE[document.getElementById('localeSelect').value]||LOCALE.en_IN;}
+
+const CATEGORIES={
+  personal:{
+    label:'Personal Info',
+    fields:{
+      id:{label:'ID',type:'uuid',fn:()=>uid()},
+      firstName:{label:'First Name',type:'string',fn:()=>pick(loc().first)},
+      lastName:{label:'Last Name',type:'string',fn:()=>pick(loc().last)},
+      email:{label:'Email',type:'email',fn:(r)=>`${(r.firstName||'user').toLowerCase()}.${(r.lastName||'x').toLowerCase()}${rnd(1,99)}@${pick(loc().domains)}`},
+      phone:{label:'Phone',type:'phone',fn:()=>loc().phone()},
+      dob:{label:'Date of Birth',type:'date',fn:()=>fmtDate(1960,2003)},
+      gender:{label:'Gender',type:'enum',fn:()=>pick(['Male','Female','Non-binary'])},
+      address:{label:'Address',type:'string',fn:()=>loc().street()},
+      city:{label:'City',type:'string',fn:()=>pick(loc().city)},
+      state:{label:'State',type:'string',fn:()=>pick(loc().state)},
+      zip:{label:'ZIP/PIN',type:'string',fn:()=>loc().zip()},
+      status:{label:'Status',type:'enum',fn:()=>pick(['active','active','active','inactive','pending'])},
+      role:{label:'Role',type:'enum',fn:()=>pick(['admin','editor','viewer','user','moderator'])},
+      createdAt:{label:'Created At',type:'datetime',fn:()=>fmtDT()},
+    },
+    defaultFields:['id','firstName','lastName','email','phone','city','status'],
+  },
+  financial:{
+    label:'Financial',
+    fields:{
+      userId:{label:'User ID',type:'uuid',fn:()=>uid()},
+      accountNo:{label:'Account No',type:'string',fn:()=>bankNum()},
+      iban:{label:'IBAN',type:'string',fn:()=>iban()},
+      swift:{label:'SWIFT/BIC',type:'string',fn:()=>swiftCode()},
+      bankName:{label:'Bank Name',type:'string',fn:()=>loc().bank()},
+      cardType:{label:'Card Type',type:'enum',fn:()=>pick(['Visa','Mastercard','Amex','RuPay'])},
+      cardNumber:{label:'Card Number',type:'card',fn:(r)=>{const p=r.cardType==='Amex'?'37':r.cardType==='Mastercard'?'51':'4'; return cardNum(p);}},
+      cardExpiry:{label:'Expiry',type:'string',fn:()=>`${String(rnd(1,12)).padStart(2,'0')}/${rnd(26,31)}`},
+      cvv:{label:'CVV',type:'string',fn:(r)=>String(rnd(r.cardType==='Amex'?1000:100, r.cardType==='Amex'?9999:999))},
+      balance:{label:'Balance',type:'money',fn:()=>(rnd(500,500000)/100).toFixed(2)},
+      currency:{label:'Currency',type:'string',fn:()=>loc().currency},
+      txnType:{label:'Txn Type',type:'enum',fn:()=>pick(['credit','debit','transfer','refund'])},
+      amount:{label:'Amount',type:'money',fn:()=>(rnd(100,50000)/100).toFixed(2)},
+      txnStatus:{label:'Txn Status',type:'enum',fn:()=>pick(['success','success','success','pending','failed'])},
+      txnDate:{label:'Txn Date',type:'datetime',fn:()=>fmtDT()},
+    },
+    defaultFields:['userId','bankName','cardType','cardNumber','cardExpiry','balance','currency','txnStatus'],
+  },
+  api:{
+    label:'API / JSON',
+    fields:{
+      requestId:{label:'Request ID',type:'uuid',fn:()=>uid()},
+      method:{label:'HTTP Method',type:'enum',fn:()=>pick(['GET','POST','PUT','PATCH','DELETE'])},
+      endpoint:{label:'Endpoint',type:'string',fn:()=>pick(['/api/v1/users','/api/v2/orders','/api/v1/products','/api/v3/payments','/api/v1/auth/token'])},
+      statusCode:{label:'Status Code',type:'integer',fn:()=>pick([200,200,200,201,400,401,403,404,500])},
+      responseTime:{label:'Response Time (ms)',type:'integer',fn:()=>rnd(12,2400)},
+      ipAddress:{label:'IP Address',type:'string',fn:()=>`${rnd(1,255)}.${rnd(0,255)}.${rnd(0,255)}.${rnd(0,255)}`},
+      userAgent:{label:'User Agent',type:'string',fn:()=>pick(['Mozilla/5.0 (Windows NT 10.0)','Mozilla/5.0 (Macintosh)','Mozilla/5.0 (Linux; Android 13)'])},
+      apiKey:{label:'API Key',type:'string',fn:()=>`sk_${pick(['live','test'])}_${Math.random().toString(36).slice(2,26)}`},
+      payload:{label:'Payload Size (B)',type:'integer',fn:()=>rnd(64,8192)},
+      sessionId:{label:'Session ID',type:'string',fn:()=>`sess_${Math.random().toString(36).slice(2,18)}`},
+      timestamp:{label:'Timestamp',type:'datetime',fn:()=>fmtDT()},
+    },
+    defaultFields:['requestId','method','endpoint','statusCode','responseTime','ipAddress','timestamp'],
+  },
+  database:{
+    label:'DB Records',
+    fields:{
+      id:{label:'PK (id)',type:'integer',fn:(r,i)=>i+1},
+      uuid:{label:'UUID',type:'uuid',fn:()=>uid()},
+      tableName:{label:'Table',type:'enum',fn:()=>pick(['users','orders','products','transactions','sessions','logs'])},
+      createdAt:{label:'created_at',type:'datetime',fn:()=>fmtDT()},
+      updatedAt:{label:'updated_at',type:'datetime',fn:()=>fmtDT()},
+      isDeleted:{label:'is_deleted',type:'boolean',fn:()=>pick([false,false,false,true])},
+      version:{label:'version',type:'integer',fn:()=>rnd(1,20)},
+      checksum:{label:'checksum',type:'string',fn:()=>Math.random().toString(16).slice(2,18)},
+      status:{label:'status',type:'enum',fn:()=>pick(['active','inactive','pending','archived'])},
+      recordSize:{label:'size_bytes',type:'integer',fn:()=>rnd(128,65536)},
+      indexKey:{label:'index_key',type:'string',fn:()=>`idx_${Math.random().toString(36).slice(2,10)}`},
+      foreignKey:{label:'fk_ref_id',type:'integer',fn:()=>rnd(1,10000)},
+    },
+    defaultFields:['id','uuid','tableName','status','createdAt','updatedAt','isDeleted','version'],
+  },
+};
+
+let currentCat='personal';
+let activeFields=[];
+let generatedData=[];
+let currentView='table';
+
+function selectCat(cat){
+  currentCat=cat;
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.toggle('active',t.dataset.cat===cat));
+  activeFields=[...CATEGORIES[cat].defaultFields];
+  buildFieldList();
+}
+
+function buildFieldList(){
+  const list=document.getElementById('fieldList');
+  const fields=CATEGORIES[currentCat].fields;
+  list.innerHTML='';
+  Object.entries(fields).forEach(([key,def])=>{
+    const on=activeFields.includes(key);
+    const el=document.createElement('div');
+    el.className='field-item'+(on?' on':'');
+    el.dataset.key=key;
+    el.onclick=()=>toggleField(key);
+    el.innerHTML=`<div class="fcheck"><div class="fcheck-inner"><svg viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div><span class="fname">${def.label}</span><span class="ftype">${def.type}</span>`;
+    list.appendChild(el);
+  });
+}
+
+function toggleField(key){
+  const idx=activeFields.indexOf(key);
+  if(idx>-1)activeFields.splice(idx,1); else activeFields.push(key);
+  buildFieldList();
+}
+
+function generateData(){
+  if(!activeFields.length){activeFields=[...CATEGORIES[currentCat].defaultFields];buildFieldList();}
+  const count=parseInt(document.getElementById('countSlider').value);
+  const t0=performance.now();
+  const fields=CATEGORIES[currentCat].fields;
+  generatedData=[];
+  for(let i=0;i<count;i++){
+    const row={};
+    activeFields.forEach(f=>{if(fields[f])row[f]=fields[f].fn(row,i);});
+    generatedData.push(row);
+  }
+  const t1=performance.now();
+  const json=JSON.stringify(generatedData);
+  const bytes=new TextEncoder().encode(json).length;
+  document.getElementById('sRecords').textContent=count;
+  document.getElementById('sFields').textContent=activeFields.length;
+  document.getElementById('sSize').textContent=bytes>1024?`${(bytes/1024).toFixed(1)}k`:`${bytes}B`;
+  document.getElementById('sTime').textContent=`${Math.round(t1-t0)}ms`;
+  document.getElementById('statsRow').style.display='grid';
+  document.getElementById('exportBar').style.display='flex';
+  document.getElementById('exportInfo').textContent=`${count} records · ${activeFields.length} fields · ${currentCat}`;
+  renderView();
+}
+
+function renderView(){
+  if(currentView==='table')renderTable();
+  else if(currentView==='json')renderJSON();
+  else renderSQL();
+}
+
+function renderTable(){
+  const empty=document.getElementById('emptyState');
+  const tv=document.getElementById('tableView');
+  if(!generatedData.length){empty.style.display='flex';tv.style.display='none';return;}
+  empty.style.display='none';tv.style.display='block';
+  const fields=CATEGORIES[currentCat].fields;
+  document.getElementById('tHead').innerHTML=`<tr><th>#</th>${activeFields.map(f=>`<th>${fields[f]?.label||f}</th>`).join('')}</tr>`;
+  document.getElementById('tBody').innerHTML=generatedData.map((row,i)=>`<tr><td class="td-idx">${i+1}</td>${activeFields.map(f=>`<td class="${cellCls(f)}">${renderCell(f,row[f])}</td>`).join('')}</tr>`).join('');
+}
+
+function cellCls(f){
+  if(f==='email')return 'td-email';
+  if(f==='phone')return 'td-phone';
+  if(f==='createdAt'||f==='updatedAt'||f==='dob'||f==='txnDate'||f==='timestamp')return 'td-date';
+  if(f==='balance'||f==='amount')return 'td-money';
+  if(f==='cardNumber')return 'td-card';
+  if(f==='id'||f==='uuid'||f==='requestId'||f==='userId')return 'td-id';
+  return '';
+}
+
+function renderCell(f,v){
+  if(f==='status'||f==='txnStatus'){
+    const m={active:'pill-active',success:'pill-active',inactive:'pill-inactive',pending:'pill-pending',failed:'pill-failed',archived:'pill-inactive'};
+    return `<span class="pill ${m[v]||'pill-inactive'}">${v}</span>`;
+  }
+  if(typeof v==='boolean')return `<span class="pill ${v?'pill-failed':'pill-active'}">${v}</span>`;
+  const s=String(v??'');
+  return s.length>26?s.slice(0,24)+'…':s;
+}
+
+function renderJSON(){
+  const el=document.getElementById('jsonView');
+  if(!generatedData.length){el.innerHTML='// No data';return;}
+  const str=JSON.stringify(generatedData.slice(0,30),null,2);
+  el.innerHTML=str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"([^"]+)":/g,'<span class="jk">"$1"</span>:')
+    .replace(/: "([^"]*)"/g,': <span class="js">"$1"</span>')
+    .replace(/: (\d+\.?\d*)/g,': <span class="jn">$1</span>')
+    .replace(/: (true|false|null)/g,': <span class="jb">$1</span>');
+  if(generatedData.length>30)el.innerHTML+=`\n<span style="color:var(--dim)">// ... ${generatedData.length-30} more records</span>`;
+}
+
+function renderSQL(){
+  const el=document.getElementById('sqlView');
+  if(!generatedData.length){el.innerHTML='-- No data';return;}
+  const tbl=`${currentCat}_test_data`;
+  const fields=CATEGORIES[currentCat].fields;
+  const typeMap={uuid:'UUID',string:'VARCHAR(255)',email:'VARCHAR(255)',phone:'VARCHAR(50)',date:'DATE',datetime:'TIMESTAMP',integer:'INTEGER',float:'DECIMAL(10,2)',money:'DECIMAL(15,2)',enum:'VARCHAR(50)',card:'VARCHAR(24)',boolean:'BOOLEAN'};
+  const cols=activeFields.map(f=>`  ${f} ${typeMap[fields[f]?.type]||'VARCHAR(255)'}`).join(',\n');
+  const vals=generatedData.slice(0,15).map(row=>`  (${activeFields.map(f=>JSON.stringify(row[f]??null)).join(', ')})`).join(',\n');
+  el.innerHTML=`<span class="sk">CREATE TABLE IF NOT EXISTS</span> ${tbl} (\n${cols}\n);\n\n<span class="sk">INSERT INTO</span> ${tbl} (${activeFields.join(', ')})\n<span class="sk">VALUES</span>\n${vals};\n\n<span style="color:var(--dim)">-- Total: ${generatedData.length} records</span>`;
+}
+
+function switchView(v){
+  currentView=v;
+  ['table','json','sql'].forEach(x=>{
+    document.getElementById(`vt-${x}`).classList.toggle('active',x===v);
+    if(x!=='table'){const el=document.getElementById(`${x}View`);el.style.display=v===x?'block':'none';}
+  });
+  const tv=document.getElementById('tableView');
+  tv.style.display=v==='table'&&generatedData.length?'block':'none';
+  if(generatedData.length)renderView();
+}
+
+function copyView(){
+  if(!generatedData.length)return;
+  let txt;
+  if(currentView==='json')txt=JSON.stringify(generatedData,null,2);
+  else if(currentView==='sql')txt=document.getElementById('sqlView').textContent;
+  else txt=[activeFields.join(','),...generatedData.map(r=>activeFields.map(f=>String(r[f]??'')).join(','))].join('\n');
+  navigator.clipboard.writeText(txt).then(()=>toast('Copied to clipboard'));
+}
+
+function clearAll(){
+  generatedData=[];
+  document.getElementById('emptyState').style.display='flex';
+  document.getElementById('tableView').style.display='none';
+  document.getElementById('jsonView').style.display='none';
+  document.getElementById('jsonView').innerHTML='';
+  document.getElementById('sqlView').style.display='none';
+  document.getElementById('sqlView').innerHTML='';
+  document.getElementById('statsRow').style.display='none';
+  document.getElementById('exportBar').style.display='none';
+}
+
+function doExport(fmt){
+  if(!generatedData.length)return;
+  const tbl=`${currentCat}_data`;
+  if(fmt==='json'){
+    dl(JSON.stringify(generatedData,null,2),'application/json',`${tbl}.json`);
+  } else if(fmt==='csv'){
+    const fields=CATEGORIES[currentCat].fields;
+    const hdr=activeFields.map(f=>fields[f]?.label||f).join(',');
+    const rows=generatedData.map(r=>activeFields.map(f=>{const v=String(r[f]??'');return v.includes(',')?`"${v.replace(/"/g,'""')}"`:v;}).join(','));
+    dl([hdr,...rows].join('\n'),'text/csv',`${tbl}.csv`);
+  } else if(fmt==='sql'){
+    dl(document.getElementById('sqlView').textContent,'text/plain',`${tbl}.sql`);
+  } else if(fmt==='xlsx'){
+    if(typeof XLSX==='undefined'){toast('XLSX library loading... try again');return;}
+    const fields=CATEGORIES[currentCat].fields;
+    const hdrs=activeFields.map(f=>fields[f]?.label||f);
+    const rows=generatedData.map(r=>activeFields.map(f=>r[f]??''));
+    const ws=XLSX.utils.aoa_to_sheet([hdrs,...rows]);
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,tbl);
+    XLSX.writeFile(wb,`${tbl}.xlsx`);
+    toast('Excel file downloaded');
+    return;
+  }
+  toast(`Exported as .${fmt}`);
+}
+
+function dl(content,mime,name){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type:mime}));
+  a.download=name;a.click();
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2000);
+}
+
+selectCat('personal');
+</script>
